@@ -18,6 +18,8 @@
 
 namespace TiBeN\CrontabManager;
 
+use InvalidArgumentException;
+
 /**
  * CrontabRepository
  * 
@@ -106,7 +108,34 @@ class CrontabRepository
         
         return $crontabJobs;
     }
-    
+
+    /**
+     * Finds jobs by matching theirs task commands with a regex
+     *
+     * @param String $comment
+     * @throws InvalidArgumentException
+     * @return Array of CronJobs
+     */
+    public function findJobByComment ($comment)
+    {
+        if (strlen($comment) == 0) {
+            throw new \InvalidArgumentException('Input parameter empty : $comment');
+        }
+
+        $crontabJobs = array();
+
+        if (!empty($this->crontabJobs)) {
+            /** @var \TiBeN\CrontabManager\CrontabJob $crontabJob */
+            foreach ($this->crontabJobs as $crontabJob) {
+                if ($comment == $crontabJob->comments) {
+                    array_push($crontabJobs, $crontabJob);
+                }
+            }
+        }
+
+        return $crontabJobs;
+    }
+
     /**
      * Add an new CrontabJob in the connected crontab
      *
